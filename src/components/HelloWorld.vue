@@ -7,6 +7,7 @@
 
 <script>
 const moment = require('moment');
+import 'semantic-ui-css/semantic.min.css';
 
 axios({
   method: 'get',
