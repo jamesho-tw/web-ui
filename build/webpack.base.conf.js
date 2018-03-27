@@ -82,7 +82,10 @@ module.exports = {
   },
   plugins: [
     new webpack.ProvidePlugin({
-      axios: 'axios'
+      axios: 'axios',
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery'
     })
   ]
 }

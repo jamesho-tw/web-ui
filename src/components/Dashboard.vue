@@ -1,14 +1,11 @@
 <template>
-  <div class="hello">
+  <div class="main">
     <h1>{{ msg }}</h1>
-    <button class="ui button">Follow</button>
-    </div>
+  </div>
 </template>
 
 <script>
-const moment = require('moment');
-import 'semantic-ui-css/semantic.min.css';
-
+/*
 axios({
   method: 'get',
   url: 'http://localhost:3000/users/1',
@@ -20,8 +17,9 @@ axios({
 }).catch(error => {
   console.log(error);
 });
+*/
+const moment = require('moment');
 console.log(moment());
-//console.log($('div.hello').html());
 
 export default {
   name: 'HelloWorld',
@@ -35,18 +33,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>
