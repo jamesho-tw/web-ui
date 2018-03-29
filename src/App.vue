@@ -1,28 +1,5 @@
 <template>
   <div id="app">
-    <b-navbar type="dark" variant="dark">
-      <b-navbar-brand href="#">{{ brand }}</b-navbar-brand>
-      <b-navbar-nav>
-        <b-dropdown variant="link" size="sm" right no-caret>
-          <template slot="button-content">
-            <i class="fa fa-user-circle fa-2x white"></i>
-          </template>
-          <b-dropdown-item href="#">Settings</b-dropdown-item>
-          <b-dropdown-item href="#">Logout</b-dropdown-item>
-        </b-dropdown>
-      </b-navbar-nav>
-    </b-navbar>
-    <div class="nav-collapse">
-      <li><a href="#"><i class="fa fa-dashboard fa-sm"></i>Dashboard</a></li>
-      <li v-b-toggle.users>
-        <a href="#"><i class="fa fa-id-card fa-sm"></i>User Managment<span class="arrow"></span></a>
-      </li>
-      <b-collapse id="users">
-        <li><a href="#">Users</a></li>
-        <li><a href="#">Roles</a></li>
-      </b-collapse>
-      <li><a href="#"><i class="fa fa-area-chart fa-sm"></i>Reports</a></li>
-    </div>
     <router-view/>
   </div>
 </template>
@@ -67,8 +44,7 @@ export default {
   font-weight: bold;
   background-color: #ddd;
 }
-
-.nav-collapse li :not(collapsed) .arrow:before {
+.nav-collapse div :not(collapsed) .arrow:before {
   font-family: FontAwesome;
   content: "\f078";
   display: block;
@@ -77,12 +53,12 @@ export default {
   float: right;
 }
 
-.nav-collapse li a {
+.nav-collapse a {
   color: #777;
   text-decoration: none;
 }
 
-.nav-collapse li a i {
+.nav-collapse li i {
   padding-right: 1em;
 }
 
@@ -92,5 +68,15 @@ export default {
   padding: 1em;
   display: block;
   float: right;
+}
+
+@media screen and (max-height: 1080px) {
+  .ui.basic.button:hover {
+    background-color:#f2f8fe !important;
+    font-weight: bold;
+  }
+  .card {
+    height: 870px;
+  }
 }
 </style>
