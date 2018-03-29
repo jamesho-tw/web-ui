@@ -63,7 +63,7 @@
           if (this.password.length == 0) {
             this.$refs.password.focus();
           } else {
-            // go to login
+            this.login();
           }
         }
       },
@@ -72,7 +72,7 @@
           if (this.username.length == 0) {
             this.$refs.username.focus();
           } else {
-            // go to login
+            this.login();
           }
         }
       },
@@ -108,7 +108,6 @@
           var userinfo = response.data;
           userinfo['token'] = token;
           if (token && userinfo) {
-            console.log(userinfo);
             localStorage['USERINFO'] = btoa(JSON.stringify(userinfo));
             this.$router.push('/');
           }
