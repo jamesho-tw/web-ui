@@ -34,7 +34,7 @@
     },
     methods: {
       init: function () {
-        var userinfo = (localStorage['USERINFO']) ? JSON.parse(atob(localStorage['USERINFO'])) : {};
+        var userinfo = getUserinfo(localStorage['USERINFO']);
         this.brand = userinfo.username;
       },
       logout: function () {
@@ -44,4 +44,16 @@
       }
     }
   };
+  function getUserinfo(o) {
+    var result = {};
+    try {
+      result = JSON.parse(atob(o));
+    } catch (error) {
+      console.log(error);
+      result = {};
+    }
+    finally {
+      return result;
+    }
+  }
 </script>
