@@ -60,7 +60,6 @@
             <label>Username:</label>
             <input type="text" v-model="create.username.value" autocomplete="off" />
           </div>
-
         </div>
         <div class="field">
           <div class="ui left input">
