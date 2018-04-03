@@ -80,6 +80,12 @@
           </div>
         </div>
         <div class="field">
+          <div class="ui left input">
+            <label>Roles:</label>
+            <sui-dropdown fluid multiple selection />
+          </div>
+        </div>
+        <div class="field">
           <div class="clear">
             <div class="checkbox">
               <input type="checkbox" v-model="create.password.force" />
@@ -186,6 +192,8 @@
         // }
         var user = {
           username: this.create.username.value,
+          password: this.create.password.value,
+          force: this.create.password.force,
           enabled: this.create.enabled,
         };
         doCreate(user);
@@ -278,6 +286,11 @@
   .input input[type="password"] {
     width: 240px;
     height: 2.5em;
+  }
+
+  .field .selection {
+    width: 240px;
+    height: 2em;
   }
 
   .field input[type="checkbox"] {

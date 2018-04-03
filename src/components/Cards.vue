@@ -12,14 +12,14 @@
   import HeaderArea from '@/components/HeaderArea'
   import MenuArea from '@/components/MenuArea'
   export default {
-    name: "Roles",
+    name: "Cards",
     components: {
       HeaderArea,
       MenuArea
     },
     data() {
       return {
-        msg: 'Roles'
+        msg: 'Cards'
       }
     }
   }

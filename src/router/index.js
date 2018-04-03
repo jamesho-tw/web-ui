@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Dashboard from '@/components/Dashboard'
 import Users from '@/components/Users'
 import Roles from '@/components/Roles'
+import Cards from '@/components/Cards'
 import Login from '@/components/Login'
 import NotFound from '@/components/NotFound'
 
@@ -33,6 +34,11 @@ export default new Router({
       path: '/roles',
       name: 'Roles',
       component: Roles
+    },
+    {
+      path: '/cards',
+      name: 'Cards',
+      component: Cards
     }
   ],
   redirect: {
