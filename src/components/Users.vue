@@ -2,14 +2,12 @@
   <div class="wrapper">
     <HeaderArea></HeaderArea>
     <MenuArea></MenuArea>
+    <Error v-show="error.open" :message="error.message"></Error>
     <div class="main">
       <b-card>
         <sui-button basic size="mini" v-b-modal="'create.open'">Create</sui-button>
         <sui-button basic size="mini" v-on:click="getUsers()">Edit</sui-button>
         <sui-button basic size="mini">Delete</sui-button>
-        <sui-message v-show="getStatus()">
-          <sui-message-header class="red">{{ error.message }}</sui-message-header>
-        </sui-message>
         <div v-show="status" style="padding:1em 0;">
           <sui-table single-line>
             <sui-table-header>
@@ -113,11 +111,13 @@
 <script>
   import HeaderArea from '@/components/HeaderArea'
   import MenuArea from '@/components/MenuArea'
+  import Error from '@/components/Error'
   export default {
     name: "Users",
     components: {
       HeaderArea,
-      MenuArea
+      MenuArea,
+      Error
     },
     data() {
       return {
@@ -138,6 +138,7 @@
         },
         status: true,
         error: {
+          open: false,
           message: ''
         },
         fields: [
@@ -155,9 +156,6 @@
     methods: {
       init: function () {
         this.getUsers();
-      },
-      getStatus: function () {
-        return !this.status;
       },
       randomPassword: function () {
         this.create.password.type = 'text';
@@ -210,7 +208,7 @@
           this.status = true;
           this.items = response.data;
         }).catch(error => {
-          this.status = false;
+          this.error.open = true;
           this.error.message = 'Connection refuse!';
           console.log(error);
         });
