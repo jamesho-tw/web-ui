@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <b-modal ref="error" centered size="lg" hide-header-close="true" no-close-on-esc="true" no-close-on-backdrop="true" :title="title">
+    <b-modal ref="error" centered size="lg" :hide-header-close="true" :no-close-on-esc="true" :no-close-on-backdrop="true" :title="title">
       <sui-message-header class="red">{{ message }}</sui-message-header>
       <div class="field" slot="modal-footer">
         <sui-button v-on:click="reload()">{{ buttons.reload }}</sui-button>
