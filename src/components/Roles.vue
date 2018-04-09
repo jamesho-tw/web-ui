@@ -6,9 +6,7 @@
     <div class="main">
       <b-card>
         <div id="toolbar">
-          <sui-button basic size="mini" v-b-modal="'create.open'">Create</sui-button>
-          <sui-button basic size="mini">Edit</sui-button>
-          <sui-button basic size="mini">Delete</sui-button>
+          <sui-button basic size="mini" v-b-modal="'addnew.open'">Create</sui-button>
         </div>
         <div id="context">
           <sui-table single-line>
@@ -19,6 +17,7 @@
                 <sui-table-header-cell>Description</sui-table-header-cell>
                 <sui-table-header-cell>Creation Date</sui-table-header-cell>
                 <sui-table-header-cell>Status</sui-table-header-cell>
+                <sui-table-header-cell></sui-table-header-cell>
               </sui-table-row>
             </sui-table-header>
             <sui-table-body>
@@ -28,22 +27,25 @@
                 <sui-table-header-cell>{{ item.description }}</sui-table-header-cell>
                 <sui-table-header-cell>{{ item.created }}</sui-table-header-cell>
                 <sui-table-header-cell>{{ item.enabled }}</sui-table-header-cell>
+                <sui-table-header-cell>
+                  <button class="ui mini editor button" v-on:click="editRole(item.id)">Edit</button>
+                </sui-table-header-cell>
               </sui-table-row>
             </sui-table-body>
           </sui-table>
         </div>
-        <b-modal ref="model" id="create.open" :title="create.title" centered size="lg">
+        <b-modal ref="addnew" id="addnew.open" :title="addnew.title" centered size="lg">
           <div class="field">
             <div class="ui left input">
               <label>Name:</label>
-              <input type="text" v-model="create.form.name" autocomplete="off" />
+              <input type="text" v-model="addnew.data.name" autocomplete="off" />
             </div>
           </div>
           <div class="field">
             <div class="ui left input">
               <label>Description:</label>
               <div class="ui reply form">
-                <textarea v-model="create.form.description"></textarea>
+                <textarea v-model="addnew.data.description"></textarea>
               </div>
             </div>
           </div>
@@ -51,7 +53,7 @@
           <div class="field">
             <div class="clear">
               <div class="checkbox">
-                <input type="checkbox" v-model="create.form.enabled" />
+                <input type="checkbox" v-model="addnew.data.enabled" />
               </div>
               <div class="message">Enabled</div>
             </div>
@@ -59,6 +61,46 @@
           <div class="field" slot="modal-footer">
             <button class="ui button primary" v-on:click="handleSubmit()">Create</button>
             <button class="ui button secondary" v-on:click="handleCancel()">Cancel</button>
+          </div>
+        </b-modal>
+        <b-modal ref="edit" id="edit.open" :title="edit.title" centered size="lg">
+          <div class="field">
+            <div class="ui left input">
+              <label>Name:</label>
+              <input type="text" v-model="edit.data.name" autocomplete="off" />
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui left input">
+              <label>Description:</label>
+              <div class="ui reply form">
+                <textarea v-model="edit.data.description"></textarea>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="field">
+            <div class="clear">
+              <div class="checkbox">
+                <input type="checkbox" v-model="edit.data.enabled" />
+              </div>
+              <div class="message">Enabled</div>
+            </div>
+          </div>
+          <hr />
+          <div class="field">
+            <div class="clear">
+              <div class="title" v-on:click="deleteRole()">Delete this role</div>
+              <div class="description" v-show="edit.delete.open">Once you delete this role, there is no going back.</div>
+              <div class="ui divided items" v-show="edit.delete.open">
+                <div class="item">
+                  <button class="ui negative button">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="field" slot="modal-footer">
+            <button class="ui primary button">Save</button>
           </div>
         </b-modal>
       </b-card>
@@ -81,13 +123,25 @@
     data() {
       return {
         msg: 'Roles',
-        create: {
+        addnew: {
           open: false,
           title: 'Create New Role',
-          form: {
+          data: {
             name: '',
             description: '',
             enabled: true
+          }
+        },
+        edit: {
+          open: false,
+          title: 'Edit Role',
+          data: {
+            name: '',
+            description: '',
+            enabled: true
+          },
+          delete: {
+            open: false
           }
         },
         retrieve: {
@@ -107,17 +161,17 @@
         // TODO: validation
 
         var role = {
-          name: this.create.form.name,
-          description: this.create.form.description,
-          enabled: this.create.form.enabled
+          name: this.addnew.data.name,
+          description: this.addnew.data.description,
+          enabled: this.addnew.data.enabled
         };
         this.doCreate(role);
       },
       handleCancel: function () {
-        this.create.form.name = '';
-        this.create.form.description = '';
-        this.create.form.enabled = true;
-        this.$refs.model.hide();
+        this.addnew.data.name = '';
+        this.addnew.data.description = '';
+        this.addnew.data.enabled = true;
+        this.$refs.addnew.hide();
       },
       doCreate: function (role) {
         axios({
@@ -138,7 +192,7 @@
       getRoles: function () {
         axios({
           method: 'get',
-          url: utils.getRestUrl('/rolesxx'),
+          url: utils.getRestUrl('/roles'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': utils.getAuthorization()
@@ -161,6 +215,20 @@
             console.log(error.response.status);
           }
         });
+      },
+      editRole: function (id) {
+        var g = this;
+        g.retrieve.items.forEach(function (item) {
+          if (item.id == id) {
+            g.edit.data.name = item.name;
+            g.edit.data.description = item.description;
+            g.edit.data.enabled = item.enabled;
+          }
+        });
+        g.$refs.edit.show();
+      },
+      deleteRole: function () {
+        this.edit.delete.open = !this.edit.delete.open;
       }
     }
   }
@@ -205,5 +273,18 @@
 
   .field .clear {
     clear: both;
+  }
+
+  .title {
+    font-weight: bold;
+  }
+
+  .description {
+    color: #888;
+  }
+
+  .editor {
+    padding: 4px 2px;
+    width: 50px;
   }
 </style>
