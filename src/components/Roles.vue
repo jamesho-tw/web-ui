@@ -34,75 +34,77 @@
             </sui-table-body>
           </sui-table>
         </div>
-        <b-modal ref="addnew" id="addnew.open" :title="addnew.title" centered size="lg">
-          <div class="field">
-            <div class="ui left input">
-              <label>Name:</label>
-              <input type="text" v-model="addnew.data.name" autocomplete="off" />
-            </div>
-          </div>
-          <div class="field">
-            <div class="ui left input">
-              <label>Description:</label>
-              <div class="ui reply form">
-                <textarea v-model="addnew.data.description"></textarea>
+        <div id="modal">
+          <b-modal ref="addnew" id="addnew.open" :title="addnew.title" centered size="lg">
+            <div class="field">
+              <div class="ui left input">
+                <label>Name:</label>
+                <input type="text" v-model="addnew.data.name" autocomplete="off" />
               </div>
             </div>
-          </div>
-          <hr />
-          <div class="field">
-            <div class="clear">
-              <div class="checkbox">
-                <input type="checkbox" v-model="addnew.data.enabled" />
-              </div>
-              <div class="message">Enabled</div>
-            </div>
-          </div>
-          <div class="field" slot="modal-footer">
-            <button class="ui button primary" v-on:click="handleAddnewCreate()">Create</button>
-            <button class="ui button secondary" v-on:click="handleAddnewCancel()">Cancel</button>
-          </div>
-        </b-modal>
-        <b-modal ref="edit" id="edit.open" :title="edit.title" centered size="lg">
-          <div class="field">
-            <div class="ui left input">
-              <label>Name:</label>
-              <input type="text" v-model="edit.data.name" autocomplete="off" />
-            </div>
-          </div>
-          <div class="field">
-            <div class="ui left input">
-              <label>Description:</label>
-              <div class="ui reply form">
-                <textarea v-model="edit.data.description"></textarea>
-              </div>
-            </div>
-          </div>
-          <hr />
-          <div class="field">
-            <div class="clear">
-              <div class="checkbox">
-                <input type="checkbox" v-model="edit.data.enabled" />
-              </div>
-              <div class="message">Enabled</div>
-            </div>
-          </div>
-          <hr />
-          <div class="field">
-            <div class="clear">
-              <div class="title" v-on:click="deleteRole()">Delete this role</div>
-              <div class="description" v-show="edit.delete.open">Once you delete this role, there is no going back.</div>
-              <div class="ui divided items" v-show="edit.delete.open">
-                <div class="item">
-                  <button class="ui negative button" v-on:click="handleEditDelete()">Delete</button>
+            <div class="field">
+              <div class="ui left input">
+                <label>Description:</label>
+                <div class="ui reply form">
+                  <textarea v-model="addnew.data.description"></textarea>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="field" slot="modal-footer">
-            <button class="ui primary button" v-on:click="handleEditSave()">Save</button>
-          </div>
-        </b-modal>
+            <hr />
+            <div class="field">
+              <div class="clear">
+                <div class="checkbox">
+                  <input type="checkbox" v-model="addnew.data.enabled" />
+                </div>
+                <div class="message">Enabled</div>
+              </div>
+            </div>
+            <div class="field" slot="modal-footer">
+              <button class="ui button primary" v-on:click="handleAddnewCreate()">Create</button>
+              <button class="ui button secondary" v-on:click="handleAddnewCancel()">Cancel</button>
+            </div>
+          </b-modal>
+          <b-modal ref="edit" id="edit.open" :title="edit.title" centered size="lg">
+            <div class="field">
+              <div class="ui left input">
+                <label>Name:</label>
+                <input type="text" v-model="edit.data.name" autocomplete="off" />
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Description:</label>
+                <div class="ui reply form">
+                  <textarea v-model="edit.data.description"></textarea>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="field">
+              <div class="clear">
+                <div class="checkbox">
+                  <input type="checkbox" v-model="edit.data.enabled" />
+                </div>
+                <div class="message">Enabled</div>
+              </div>
+            </div>
+            <hr />
+            <div class="field">
+              <div class="clear">
+                <div class="title" v-on:click="deleteRole()">Delete this role</div>
+                <div class="description" v-show="edit.delete.open">Once you delete this role, there is no going back.</div>
+                <div class="ui divided items" v-show="edit.delete.open">
+                  <div class="item">
+                    <button class="ui negative button" v-on:click="handleEditDelete()">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="field" slot="modal-footer">
+              <button class="ui primary button" v-on:click="handleEditSave()">Save</button>
+            </div>
+          </b-modal>
+        </div>
       </b-card>
     </div>
   </div>
@@ -122,7 +124,6 @@
     },
     data() {
       return {
-        msg: 'Roles',
         addnew: {
           open: false,
           title: 'Create New Role',
@@ -158,49 +159,6 @@
       this.getRoles();
     },
     methods: {
-      handleEditSave: function (id) {
-        var role = {
-          id: this.edit.data.id,
-          name: this.edit.data.name,
-          description: this.edit.data.description,
-          enabled: this.edit.data.enabled
-        };
-        axios({
-          method: 'patch',
-          url: utils.getRestUrl('/roles/'.concat(role.id)),
-          data: role,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': utils.getAuthorization()
-          }
-        }).then(response => {
-          // console.log(response.data);
-          this.getRoles();
-          this.$refs.edit.hide();
-        }).catch(error => {
-          console.log(error);
-        });
-      },
-      handleEditDelete: function () {
-        var role = {
-          id: this.edit.data.id
-        };
-        axios({
-          method: 'delete',
-          url: utils.getRestUrl('/roles/'.concat(role.id)),
-          data: role,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': utils.getAuthorization()
-          }
-        }).then(response => {
-          // console.log(response.data);
-          this.getRoles();
-          this.$refs.edit.hide();
-        }).catch(error => {
-          console.log(error);
-        });
-      },
       handleAddnewCancel: function () {
         this.addnew.data.name = '';
         this.addnew.data.description = '';
@@ -226,6 +184,45 @@
           // console.log(response.data);
           this.getRoles();
           this.handleAddnewCancel();
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      handleEditSave: function (id) {
+        var role = {
+          id: this.edit.data.id,
+          name: this.edit.data.name,
+          description: this.edit.data.description,
+          enabled: this.edit.data.enabled
+        };
+        axios({
+          method: 'patch',
+          url: utils.getRestUrl('/roles/'.concat(role.id)),
+          data: role,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': utils.getAuthorization()
+          }
+        }).then(response => {
+          // console.log(response.data);
+          this.getRoles();
+          this.$refs.edit.hide();
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      handleEditDelete: function () {
+        axios({
+          method: 'delete',
+          url: utils.getRestUrl('/roles/'.concat(this.edit.data.id)),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': utils.getAuthorization()
+          }
+        }).then(response => {
+          // console.log(response.data);
+          this.getRoles();
+          this.$refs.edit.hide();
         }).catch(error => {
           console.log(error);
         });
@@ -282,55 +279,4 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .main #toolbar,
-  .main #toolbar {
-    padding-bottom: 1em;
-  }
-
-  .field .input label {
-    padding: 0 1em;
-    text-align: right;
-    line-height: 36px;
-    width: 160px;
-  }
-
-  .input input[type="text"],
-  .input input[type="password"] {
-    width: 240px;
-    height: 2.5em;
-  }
-
-  .field input[type="checkbox"] {
-    width: 1.5em;
-    height: 2em;
-  }
-
-  .field textarea {
-    width: 240px;
-  }
-
-  .field .checkbox {
-    float: left;
-  }
-
-  .field .message {
-    padding: 0.3em 2em;
-  }
-
-  .field .clear {
-    clear: both;
-  }
-
-  .title {
-    font-weight: bold;
-  }
-
-  .description {
-    color: #888;
-  }
-
-  .editor {
-    padding: 4px 2px;
-    width: 50px;
-  }
 </style>
