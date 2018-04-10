@@ -59,8 +59,8 @@
             </div>
           </div>
           <div class="field" slot="modal-footer">
-            <button class="ui button primary" v-on:click="handleSubmit()">Create</button>
-            <button class="ui button secondary" v-on:click="handleCancel()">Cancel</button>
+            <button class="ui button primary" v-on:click="handleAddnewCreate()">Create</button>
+            <button class="ui button secondary" v-on:click="handleAddnewCancel()">Cancel</button>
           </div>
         </b-modal>
         <b-modal ref="edit" id="edit.open" :title="edit.title" centered size="lg">
@@ -94,13 +94,13 @@
               <div class="description" v-show="edit.delete.open">Once you delete this role, there is no going back.</div>
               <div class="ui divided items" v-show="edit.delete.open">
                 <div class="item">
-                  <button class="ui negative button">Delete</button>
+                  <button class="ui negative button" v-on:click="handleEditDelete()">Delete</button>
                 </div>
               </div>
             </div>
           </div>
           <div class="field" slot="modal-footer">
-            <button class="ui primary button">Save</button>
+            <button class="ui primary button" v-on:click="handleEditSave()">Save</button>
           </div>
         </b-modal>
       </b-card>
@@ -136,6 +136,7 @@
           open: false,
           title: 'Edit Role',
           data: {
+            id: null,
             name: '',
             description: '',
             enabled: true
@@ -157,23 +158,62 @@
       this.getRoles();
     },
     methods: {
-      handleSubmit: function () {
-        // TODO: validation
-
+      handleEditSave: function (id) {
         var role = {
-          name: this.addnew.data.name,
-          description: this.addnew.data.description,
-          enabled: this.addnew.data.enabled
+          id: this.edit.data.id,
+          name: this.edit.data.name,
+          description: this.edit.data.description,
+          enabled: this.edit.data.enabled
         };
-        this.doCreate(role);
+        axios({
+          method: 'patch',
+          url: utils.getRestUrl('/roles/'.concat(role.id)),
+          data: role,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': utils.getAuthorization()
+          }
+        }).then(response => {
+          // console.log(response.data);
+          this.getRoles();
+          this.$refs.edit.hide();
+        }).catch(error => {
+          console.log(error);
+        });
       },
-      handleCancel: function () {
+      handleEditDelete: function () {
+        var role = {
+          id: this.edit.data.id
+        };
+        axios({
+          method: 'delete',
+          url: utils.getRestUrl('/roles/'.concat(role.id)),
+          data: role,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': utils.getAuthorization()
+          }
+        }).then(response => {
+          // console.log(response.data);
+          this.getRoles();
+          this.$refs.edit.hide();
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      handleAddnewCancel: function () {
         this.addnew.data.name = '';
         this.addnew.data.description = '';
         this.addnew.data.enabled = true;
         this.$refs.addnew.hide();
       },
-      doCreate: function (role) {
+      handleAddnewCreate: function () {
+        // TODO: validation
+        var role = {
+          name: this.addnew.data.name,
+          description: this.addnew.data.description,
+          enabled: this.addnew.data.enabled
+        };
         axios({
           method: 'post',
           url: utils.getRestUrl('/roles'),
@@ -183,8 +223,9 @@
             'Authorization': utils.getAuthorization()
           }
         }).then(response => {
-          console.log(response.data);
-          this.handleCancel();
+          // console.log(response.data);
+          this.getRoles();
+          this.handleAddnewCancel();
         }).catch(error => {
           console.log(error);
         });
@@ -198,8 +239,8 @@
             'Authorization': utils.getAuthorization()
           }
         }).then(response => {
+          // console.log(response.data);
           this.retrieve.items = response.data;
-          console.log(response.data);
         }).catch(error => {
           this.error.open = true;
           if (!error.response) {
@@ -217,15 +258,20 @@
         });
       },
       editRole: function (id) {
-        var g = this;
-        g.retrieve.items.forEach(function (item) {
+        var role = {};
+        this.retrieve.items.forEach(function (item) {
           if (item.id == id) {
-            g.edit.data.name = item.name;
-            g.edit.data.description = item.description;
-            g.edit.data.enabled = item.enabled;
+            role['id'] = item.id;
+            role['name'] = item.name;
+            role['description'] = item.description;
+            role['enabled'] = item.enabled;
           }
         });
-        g.$refs.edit.show();
+        this.edit.data.id = role.id;
+        this.edit.data.name = role.name;
+        this.edit.data.description = role.description;
+        this.edit.data.enabled = role.enabled;
+        this.$refs.edit.show();
       },
       deleteRole: function () {
         this.edit.delete.open = !this.edit.delete.open;
