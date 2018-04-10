@@ -5,7 +5,7 @@ const webpack = require('webpack')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
@@ -82,10 +82,7 @@ module.exports = {
   },
   plugins: [
     new webpack.ProvidePlugin({
-      axios: 'axios',
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery'
+      axios: 'axios'
     })
   ]
 }
