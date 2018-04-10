@@ -78,7 +78,7 @@
             <div class="field">
               <div class="ui left input">
                 <label>Roles:</label>
-                <sui-dropdown fluid multiple selection />
+                <sui-dropdown fluid multiple selection :options="roles.options" v-model="addnew.data.roles" />
               </div>
             </div>
             <div class="field">
@@ -136,7 +136,7 @@
             <div class="field">
               <div class="ui left input">
                 <label>Roles:</label>
-                <sui-dropdown fluid multiple selection />
+                <sui-dropdown fluid multiple selection :options="roles.options" v-model="edit.data.roles" />
               </div>
             </div>
             <div class="field">
@@ -208,7 +208,8 @@
             password: '',
             description: '',
             force: false,
-            enabled: true
+            enabled: true,
+            roles: []
           },
           password: {
             confirm: '',
@@ -224,7 +225,8 @@
             password: '',
             description: '',
             force: false,
-            enabled: true
+            enabled: true,
+            roles: []
           },
           password: {
             confirm: '',
@@ -240,6 +242,11 @@
         error: {
           open: false,
           message: ''
+        },
+        roles: {
+          options: [
+            { key: 'AL', value: 'AL', text: 'Alabama' }
+          ]
         },
 
         status: true
@@ -366,6 +373,44 @@
           console.log(error);
         });
       },
+      getRoleOptions: function () {
+        axios({
+          method: 'get',
+          url: utils.getRestUrl('/roles'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': utils.getAuthorization()
+          }
+        }).then(response => {
+          // console.log(response.data);
+          this.roles.options = [];
+          var options = [];
+          response.data.forEach(function (item) {
+            if (item.enabled) {
+              options.push({
+                key: item.id,
+                value: item.id,
+                text: item.name,
+              });
+            }
+          });
+          this.roles.options = options;
+        }).catch(error => {
+          this.error.open = true;
+          if (!error.response) {
+            this.error.message = 'Connection refuse!';
+          } else {
+            this.error.message = error.response.data;
+            switch (error.response.status) {
+              case 404:
+                console.log('404 not found');
+                break;
+            }
+            console.log(error.response.data);
+            console.log(error.response.status);
+          }
+        });
+      },
       editUser: function (id) {
         var user = {};
         this.retrieve.items.forEach(function (item) {
@@ -379,8 +424,10 @@
         this.edit.data['description'] = user.description;
         this.edit.data['force'] = user.force;
         this.edit.data['enabled'] = user.enabled;
+        this.edit.data['roles'] = user.roles;
         this.edit.password['confirm'] = user.password;
         this.edit.password['type'] = 'password';
+        this.getRoleOptions();
         this.$refs.edit.show();
       },
       deleteUser: function () {
