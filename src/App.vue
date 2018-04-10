@@ -107,6 +107,16 @@
     width: 240px;
   }
 
+  .main #modal .field .selection {
+    width: 240px;
+    height: 2em;
+  }
+
+  .main #modal .field button.function {
+    margin-left: 1em;
+    height: 2.5em;
+  }
+
   .main #modal .field .clear {
     clear: both;
   }

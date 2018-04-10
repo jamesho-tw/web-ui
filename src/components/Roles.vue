@@ -22,14 +22,14 @@
             </sui-table-header>
             <sui-table-body>
               <sui-table-row v-for="item in retrieve.items" :key="item.id">
-                <sui-table-header-cell>{{ item.id }}</sui-table-header-cell>
-                <sui-table-header-cell>{{ item.name }}</sui-table-header-cell>
-                <sui-table-header-cell>{{ item.description }}</sui-table-header-cell>
-                <sui-table-header-cell>{{ item.created }}</sui-table-header-cell>
-                <sui-table-header-cell>{{ item.enabled }}</sui-table-header-cell>
-                <sui-table-header-cell>
+                <sui-table-cell>{{ item.id }}</sui-table-cell>
+                <sui-table-cell>{{ item.name }}</sui-table-cell>
+                <sui-table-cell>{{ item.description }}</sui-table-cell>
+                <sui-table-cell>{{ item.created }}</sui-table-cell>
+                <sui-table-cell>{{ item.enabled }}</sui-table-cell>
+                <sui-table-cell>
                   <button class="ui mini editor button" v-on:click="editRole(item.id)">Edit</button>
-                </sui-table-header-cell>
+                </sui-table-cell>
               </sui-table-row>
             </sui-table-body>
           </sui-table>

@@ -5,31 +5,31 @@
     <Error v-show="error.open" :message="error.message"></Error>
     <div class="main">
       <b-card>
-        <sui-button basic size="mini" v-b-modal="'create.open'">Create</sui-button>
-        <sui-button basic size="mini" v-on:click="getUsers()">Edit</sui-button>
-        <sui-button basic size="mini">Delete</sui-button>
-        <div v-show="status" style="padding:1em 0;">
+        <div id="toolbar">
+          <sui-button basic size="mini" v-b-modal="'addnew.open'">Create</sui-button>
+        </div>
+        <div id="context" v-show="status">
           <sui-table single-line>
             <sui-table-header>
               <sui-table-row>
-                <sui-table-header-cell>
-                  <sui-checkbox /></sui-table-header-cell>
                 <sui-table-header-cell>ID</sui-table-header-cell>
                 <sui-table-header-cell>Username</sui-table-header-cell>
                 <sui-table-header-cell>Description</sui-table-header-cell>
                 <sui-table-header-cell>Creation Date</sui-table-header-cell>
                 <sui-table-header-cell>Status</sui-table-header-cell>
+                <sui-table-header-cell></sui-table-header-cell>
               </sui-table-row>
             </sui-table-header>
             <sui-table-body>
-              <sui-table-row v-for="item in items" :key="item.id">
-                <sui-table-cell>
-                  <sui-checkbox /></sui-table-cell>
-                <sui-table-cell>{{ item.id}}</sui-table-cell>
+              <sui-table-row v-for="item in retrieve.items" :key="item.id">
+                <sui-table-cell>{{ item.id }}</sui-table-cell>
                 <sui-table-cell>{{ item.username }}</sui-table-cell>
-                <sui-table-cell></sui-table-cell>
-                <sui-table-cell></sui-table-cell>
+                <sui-table-cell>{{ item.description }}</sui-table-cell>
+                <sui-table-cell>{{ item.created }}</sui-table-cell>
                 <sui-table-cell>{{ item.enabled }}</sui-table-cell>
+                <sui-table-cell>
+                  <button class="ui mini editor button" v-on:click="editUser(item.id)">Edit</button>
+                </sui-table-cell>
               </sui-table-row>
             </sui-table-body>
             <sui-table-footer>
@@ -52,62 +52,142 @@
             </sui-table-footer>
           </sui-table>
         </div>
+        <div id="modal">
+          <b-modal ref="addnew" id="addnew.open" :title="addnew.title" centered size="lg">
+            <div class="field">
+              <div class="ui left input">
+                <label>Username:</label>
+                <input type="text" v-model="addnew.data.username" autocomplete="off" />
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Password:</label>
+                <input type="password" v-bind:type="addnew.password.type" v-on:dblclick="handleDisplayPasswordAddnew()" v-model="addnew.data.password"
+                  autocomplete="off" />
+                <button class="ui left function button" v-on:click="handleRandomPasswordAddnew()">Generate Random Password</button>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Confirm Password:</label>
+                <input type="password" v-bind:type="addnew.password.type" v-on:dblclick="handleDisplayPasswordAddnew()" v-model="addnew.password.confirm"
+                  autocomplete="off" />
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Roles:</label>
+                <sui-dropdown fluid multiple selection />
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Description:</label>
+                <div class="ui reply form">
+                  <textarea v-model="addnew.data.description"></textarea>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="field">
+              <div class="clear">
+                <div class="checkbox">
+                  <input type="checkbox" v-model="addnew.data.force" />
+                </div>
+                <div class="message">Force users to change password after the administrator resets the password</div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="clear">
+                <div class="checkbox">
+                  <input type="checkbox" v-model="addnew.data.enabled" />
+                </div>
+                <div class="message">Enabled</div>
+              </div>
+            </div>
+            <div class="field" slot="modal-footer">
+              <button class="ui button primary" v-on:click="handleAddnewCreate()">Create</button>
+              <button class="ui button secondary" v-on:click="handleAddnewCancel()">Cancel</button>
+            </div>
+          </b-modal>
+          <b-modal ref="edit" id="edit.open" :title="edit.title" centered size="lg">
+            <div class="field">
+              <div class="ui left input">
+                <label>Username:</label>
+                <input type="text" v-model="edit.data.username" autocomplete="off" />
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Password:</label>
+                <input type="password" v-bind:type="edit.password.type" v-on:dblclick="handleDisplayPasswordEdit()" v-model="edit.data.password"
+                  autocomplete="off" />
+                <button class="ui left function button" v-on:click="handleRandomPasswordEdit()">Generate Random Password</button>
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Confirm Password:</label>
+                <input type="password" v-bind:type="edit.password.type" v-on:dblclick="handleDisplayPasswordEdit()" v-model="edit.password.confirm"
+                  autocomplete="off" />
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Roles:</label>
+                <sui-dropdown fluid multiple selection />
+              </div>
+            </div>
+            <div class="field">
+              <div class="ui left input">
+                <label>Description:</label>
+                <div class="ui reply form">
+                  <textarea v-model="edit.data.description"></textarea>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="field">
+              <div class="clear">
+                <div class="checkbox">
+                  <input type="checkbox" v-model="edit.data.force" />
+                </div>
+                <div class="message">Force users to change password after the administrator resets the password</div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="clear">
+                <div class="checkbox">
+                  <input type="checkbox" v-model="edit.data.enabled" />
+                </div>
+                <div class="message">Enabled</div>
+              </div>
+            </div>
+            <hr />
+            <div class="field">
+              <div class="clear">
+                <div class="title" v-on:click="deleteUser()">Delete this user</div>
+                <div class="description" v-show="edit.delete.open">Once you delete this user, there is no going back.</div>
+                <div class="ui divided items" v-show="edit.delete.open">
+                  <div class="item">
+                    <button class="ui negative button" v-on:click="handleEditDelete()">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="field" slot="modal-footer">
+              <button class="ui primary button" v-on:click="handleEditSave()">Save</button>
+            </div>
+          </b-modal>
+        </div>
       </b-card>
-
-      <b-modal ref="model" id="create.open" centered size="lg">
-        <div class="field">
-          <div class="ui left input">
-            <label>Username:</label>
-            <input type="text" v-model="create.username.value" autocomplete="off" />
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui left input">
-            <label>Password:</label>
-            <input type="password" v-bind:type="create.password.type" v-on:dblclick="togglePassword()" v-model="create.password.value"
-              autocomplete="off" />
-            <button class="ui left button" v-on:click="randomPassword()">Generate Random Password</button>
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui left input">
-            <label>Confirm Password:</label>
-            <input type="password" v-bind:type="create.password.type" v-on:dblclick="togglePassword()" v-model="create.password.confirm"
-              autocomplete="off" />
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui left input">
-            <label>Roles:</label>
-            <sui-dropdown fluid multiple selection />
-          </div>
-        </div>
-        <div class="field">
-          <div class="clear">
-            <div class="checkbox">
-              <input type="checkbox" v-model="create.password.force" />
-            </div>
-            <div class="message">Force users to change password after the administrator resets the password</div>
-          </div>
-        </div>
-        <div class="field">
-          <div class="clear">
-            <div class="checkbox">
-              <input type="checkbox" v-model="create.enabled" />
-            </div>
-            <div class="message">Enabled</div>
-          </div>
-        </div>
-        <div class="field" slot="modal-footer">
-          <button class="ui button primary" v-on:click="handleSubmit()">Create</button>
-          <button class="ui button secondary" v-on:click="handleCancel()">Cancel</button>
-        </div>
-      </b-modal>
     </div>
   </div>
 </template>
 
 <script>
+  import utils from '../scripts/utils.js'
   import HeaderArea from '@/components/HeaderArea'
   import MenuArea from '@/components/MenuArea'
   import Error from '@/components/Error'
@@ -120,97 +200,191 @@
     },
     data() {
       return {
-        msg: "Users",
-        create: {
-          username: {
-            value: '',
-            type: 'text'
+        addnew: {
+          open: false,
+          title: 'Create New User',
+          data: {
+            username: '',
+            password: '',
+            description: '',
+            force: false,
+            enabled: true
           },
           password: {
-            value: '',
             confirm: '',
+            type: 'password'
+          }
+        },
+        edit: {
+          open: false,
+          title: 'Edit User',
+          data: {
+            id: null,
+            username: '',
+            password: '',
+            description: '',
             force: false,
+            enabled: true
+          },
+          password: {
+            confirm: '',
             type: 'password'
           },
-          enabled: true,
-          open: false
+          delete: {
+            open: false
+          }
         },
-        status: true,
+        retrieve: {
+          items: []
+        },
         error: {
           open: false,
           message: ''
         },
-        fields: [
-          { key: 'id', label: 'Index', sortable: true },
-          { key: 'username', label: 'Username', sortable: true },
-          { key: 'description', label: 'Description', sortable: false },
-          { key: 'enabled', label: 'Status', sortable: true },
-        ],
-        items: []
+
+        status: true
       };
     },
     mounted() {
-      this.init();
+      this.getUsers();
     },
     methods: {
-      init: function () {
-        this.getUsers();
-      },
-      randomPassword: function () {
-        this.create.password.type = 'text';
-        this.create.password.value = Math.random().toString(34).slice(-8);
-        this.create.password.confirm = this.create.password.value;
-      },
-      togglePassword: function () {
-        if (this.create.password.type == 'text') {
-          this.create.password.type = 'password';
+      handleDisplayPasswordAddnew: function () {
+        if (this.addnew.password.type == 'text') {
+          this.addnew.password.type = 'password';
         } else {
-          this.create.password.type = 'text';
+          this.addnew.password.type = 'text';
         }
       },
-      createUser: function () {
-        this.create.open = true;
+      handleDisplayPasswordEdit: function () {
+        if (this.edit.password.type == 'text') {
+          this.edit.password.type = 'password';
+        } else {
+          this.edit.password.type = 'text';
+        }
       },
-      handleCancel: function () {
-        this.create.username.value = '';
-        this.create.password.value = '';
-        this.create.password.type = 'password';
-        this.create.password.confirm = '';
-        this.create.password.force = false;
-        this.create.enabled = true;
-        this.$refs.model.hide();
+      handleRandomPasswordAddnew: function () {
+        this.addnew.password.type = 'text';
+        var r = Math.random().toString(34).slice(-8);
+        this.addnew.data.password = r;
+        this.addnew.password.confirm = r;
       },
-      handleSubmit: function () {
-        // if (!checkUsername(this.create.username.value)) {
+      handleRandomPasswordEdit: function () {
+        this.edit.password.type = 'text';
+        var r = Math.random().toString(34).slice(-8);
+        this.edit.data.password = r;
+        this.edit.password.confirm = r;
+      },
+      handleAddnewCancel: function () {
+        this.addnew.data.username = '';
+        this.addnew.data.password = '';
+        this.addnew.data.description = '';
+        this.addnew.data.force = false;
+        this.addnew.data.enabled = true;
+        this.addnew.password.confirm = '';
+        this.$refs.addnew.hide();
+      },
+      handleAddnewCreate: function () {
+        // if (!checkUsername(this.addnew.data.username)) {
         //   return false;
         // }
-        // if (!checkPassword(8, this.create.password.value, this.create.password.confirm)) {
+        // if (!checkPassword(8, this.addnew.data.password, this.addnew.password.confirm)) {
         //   return false;
         // }
+        axios({
+          method: 'post',
+          url: utils.getRestUrl('/users'),
+          data: JSON.stringify(this.addnew.data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': utils.getAuthorization()
+          }
+        }).then(response => {
+          // console.log(response.data);
+          this.getUsers();
+          this.handleAddnewCancel();
+        }).catch(error => {
+          console.log(error);
+        });
+        this.handleAddnewCancel();
+      },
+      handleEditSave: function () {
         var user = {
-          username: this.create.username.value,
-          password: this.create.password.value,
-          force: this.create.password.force,
-          enabled: this.create.enabled,
+          id: this.edit.data.id,
+          username: this.edit.data.name,
+          password: this.edit.data.password,
+          description: this.edit.data.description,
+          force: this.edit.data.force,
+          enabled: this.edit.data.enabled
         };
-        doCreate(user);
-        this.handleCancel();
+        axios({
+          method: 'patch',
+          url: utils.getRestUrl('/users/'.concat(user.id)),
+          data: user,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': utils.getAuthorization()
+          }
+        }).then(response => {
+          // console.log(response.data);
+          this.getUsers();
+          this.$refs.edit.hide();
+        }).catch(error => {
+          console.log(error);
+        });
+      },
+      handleEditDelete: function () {
+        axios({
+          method: 'delete',
+          url: utils.getRestUrl('/users/'.concat(this.edit.data.id)),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': utils.getAuthorization()
+          }
+        }).then(response => {
+          // console.log(response.data);
+          this.getUsers();
+          this.$refs.edit.hide();
+        }).catch(error => {
+          console.log(error);
+        });
       },
       getUsers: function () {
         axios({
           method: 'get',
-          url: 'http://localhost:3000/users',
+          url: utils.getRestUrl('/users'),
           headers: {
             'Content-Type': 'application/json'
           }
         }).then(response => {
+          // console.log(response.data);
+          this.retrieve.items = response.data;
           this.status = true;
-          this.items = response.data;
         }).catch(error => {
           this.error.open = true;
           this.error.message = 'Connection refuse!';
           console.log(error);
         });
+      },
+      editUser: function (id) {
+        var user = {};
+        this.retrieve.items.forEach(function (item) {
+          if (item.id == id) {
+            user = item;
+          }
+        });
+        this.edit.data['id'] = user.id;
+        this.edit.data['username'] = user.username;
+        this.edit.data['password'] = user.password;
+        this.edit.data['description'] = user.description;
+        this.edit.data['force'] = user.force;
+        this.edit.data['enabled'] = user.enabled;
+        this.edit.password['confirm'] = user.password;
+        this.edit.password['type'] = 'password';
+        this.$refs.edit.show();
+      },
+      deleteUser: function () {
+        this.edit.delete.open = !this.edit.delete.open;
       }
     }
   };
@@ -229,86 +403,8 @@
     }
     return true;
   }
-  function getUserinfo(o) {
-    var result = {};
-    try {
-      result = JSON.parse(atob(o));
-    } catch (error) {
-      console.log(error);
-      result = {};
-    }
-    finally {
-      return result;
-    }
-  }
-  function doCreate(user) {
-    var userinfo = getUserinfo(localStorage['USERINFO']);
-    var tokenType = (userinfo.token.token_type) ? userinfo.token.token_type : 'Bearer';
-    var accessToken = (userinfo.token.access_token) ? userinfo.token.access_token : '';
-    axios({
-      method: 'post',
-      url: 'http://localhost:3000/users',
-      data: user,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': tokenType.concat(' ').concat(accessToken)
-      }
-    }).then(response => {
-      console.log(response.data);
-      this.$router.push('/users');
-    }).catch(error => {
-      this.status = false;
-      this.error.message = 'Connection refuse!';
-      console.log(error);
-    });
-  }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .ui.basic.button:hover {
-    /* background-color:#f2f8fe !important; */
-    background-color: #eee !important;
-    font-weight: bold;
-  }
-
-  .field .input label {
-    padding: 0 1em;
-    text-align: right;
-    line-height: 36px;
-    width: 160px;
-  }
-
-  .input input[type="text"],
-  .input input[type="password"] {
-    width: 240px;
-    height: 2.5em;
-  }
-
-  .field .selection {
-    width: 240px;
-    height: 2em;
-  }
-
-  .field input[type="checkbox"] {
-    width: 1.5em;
-    height: 2em;
-  }
-
-  .field .input button {
-    margin-left: 1em;
-    height: 2.5em;
-  }
-
-  .field .checkbox {
-    float: left;
-  }
-
-  .field .message {
-    padding: 0.3em 2em;
-  }
-
-  .field .clear {
-    clear: both;
-  }
 </style>
