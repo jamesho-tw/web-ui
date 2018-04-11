@@ -10,7 +10,7 @@
     name: "App",
     data() {
       return {
-        brand: 'EG084'
+        brand: ''
       }
     }
   };
@@ -76,59 +76,55 @@
     float: right;
   }
 
-  .main #toolbar {
-    padding-bottom: 1em;
-  }
-
-  .main #context .editor {
+  .main .table .editor {
     padding: 4px 2px;
     width: 50px;
   }
 
-  .main #modal .field {
+  .main .modal .field {
     padding: 0.25em 0;
   }
 
-  .main #modal .field label {
+  .main .modal .field label {
     padding: 0 1em;
     text-align: right;
     line-height: 36px;
     width: 160px;
   }
 
-  .main #modal .field input[type="text"],
-  .main #modal .field input[type="password"],
-  .main #modal .field textarea,
-  .main #modal .field .selection {
+  .main .modal .field input[type="text"],
+  .main .modal .field input[type="password"],
+  .main .modal .field textarea,
+  .main .modal .field .selection {
     width: 240px;
   }
 
-  .main #modal .field input[type="checkbox"] {
+  .main .modal .field input[type="checkbox"] {
     width: 1.5em;
     height: 2em;
   }
 
-  .main #modal .field button.function {
+  .main .modal .field button.function {
     margin-left: 1em;
   }
 
-  .main #modal .field .clear {
+  .main .modal .field .clear {
     clear: both;
   }
 
-  .main #modal .field .checkbox {
+  .main .modal .field .checkbox {
     float: left;
   }
 
-  .main #modal .field .message {
+  .main .modal .field .message {
     padding: 0.3em 2em;
   }
 
-  .main #modal .field .title {
+  .main .modal .field .title {
     font-weight: bold;
   }
 
-  .main #modal .field .description {
+  .main .modal .field .description {
     color: #888;
   }
 
