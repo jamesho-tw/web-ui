@@ -205,14 +205,7 @@
       return {
         addnew: {
           title: 'Create New User',
-          data: {
-            username: '',
-            password: '',
-            description: '',
-            force: false,
-            enabled: true,
-            roles: []
-          },
+          data: initialAddnew(),
           password: {
             confirm: '',
             type: 'password'
@@ -220,15 +213,7 @@
         },
         edit: {
           title: 'Edit User',
-          data: {
-            id: null,
-            username: '',
-            password: '',
-            description: '',
-            force: false,
-            enabled: true,
-            roles: []
-          },
+          data: {},
           password: {
             confirm: '',
             type: 'password'
@@ -281,12 +266,11 @@
         this.edit.password.confirm = r;
       },
       handleAddnewCancel: function () {
-        this.addnew.data.username = '';
-        this.addnew.data.password = '';
-        this.addnew.data.description = '';
-        this.addnew.data.force = false;
-        this.addnew.data.enabled = true;
-        this.addnew.password.confirm = '';
+        this.addnew.data = initialAddnew();
+        this.addnew.password = {
+          confirm: '',
+          type: 'password'
+        };
         this.$refs.addnew.hide();
       },
       handleAddnewCreate: function () {
@@ -437,6 +421,16 @@
       }
     }
   };
+  function initialAddnew() {
+    return {
+      username: '',
+      password: '',
+      description: '',
+      force: false,
+      enabled: true,
+      roles: []
+    };
+  }
   function checkUsername(username) {
     if (username.length < 1) {
       return false;

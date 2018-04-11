@@ -34,6 +34,7 @@
             children: [
               { name: 'Users', path: '/users' },
               { name: 'Roles', path: '/roles' },
+              { name: 'Employees', path: '/employees' },
               { name: 'Cards', path: '/cards' }
             ],
             toggle: false

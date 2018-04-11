@@ -127,20 +127,11 @@
       return {
         addnew: {
           title: 'Create New Card',
-          data: {
-            serial_no: '',
-            description: '',
-            enabled: true
-          }
+          data: initialAddnew()
         },
         edit: {
           title: 'Edit Card',
-          data: {
-            id: null,
-            serial_no: '',
-            description: '',
-            enabled: true
-          },
+          data: {},
           delete: {
             open: false
           }
@@ -159,9 +150,7 @@
     },
     methods: {
       handleAddnewCancel: function () {
-        this.addnew.data.serial_no = '';
-        this.addnew.data.description = '';
-        this.addnew.data.enabled = true;
+        this.addnew.data = initialAddnew();
         this.$refs.addnew.hide();
       },
       handleAddnewCreate: function () {
@@ -186,7 +175,7 @@
         // TODO: validation
         axios({
           method: 'patch',
-          url: utils.getRestUrl('/cards/'.concat(card.id)),
+          url: utils.getRestUrl('/cards/'.concat(this.edit.data.id)),
           data: JSON.stringify(this.edit.data),
           headers: {
             'Content-Type': 'application/json',
@@ -250,22 +239,28 @@
         var card = {};
         this.retrieve.items.forEach(function (item) {
           if (item.id == id) {
-            card['id'] = item.id;
-            card['serial_no'] = item.serial_no;
-            card['description'] = item.description;
-            card['enabled'] = item.enabled;
+            card = item;
           }
         });
-        this.edit.data.id = card.id;
-        this.edit.data.serial_no = card.serial_no;
-        this.edit.data.description = card.description;
-        this.edit.data.enabled = card.enabled;
+        this.edit.data = {
+          id: card.id,
+          serial_no: card.serial_no,
+          description: card.description,
+          enabled: card.enabled
+        };
         this.$refs.edit.show();
       },
       deleteCard: function () {
         this.edit.delete.open = !this.edit.delete.open;
       }
     }
+  }
+  function initialAddnew() {
+    return {
+      serial_no: '',
+      description: '',
+      enabled: true
+    };
   }
 </script>
 

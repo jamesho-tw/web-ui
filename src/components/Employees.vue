@@ -9,7 +9,7 @@
           <sui-table-header>
             <sui-table-row>
               <sui-table-cell colspan="6">
-                <sui-button basic size="mini" v-on:click="openAddnewRole()">Create</sui-button>
+                <sui-button basic size="mini" v-on:click="openAddnewEmployee()">Create</sui-button>
               </sui-table-cell>
             </sui-table-row>
             <sui-table-row>
@@ -29,7 +29,7 @@
               <sui-table-cell>{{ item.created }}</sui-table-cell>
               <sui-table-cell>{{ item.enabled }}</sui-table-cell>
               <sui-table-cell>
-                <sui-button size="mini" class="editor" v-on:click="openEditRole(item.id)">Edit</sui-button>
+                <sui-button size="mini" class="editor" v-on:click="openEditEmployee(item.id)">Edit</sui-button>
               </sui-table-cell>
             </sui-table-row>
           </sui-table-body>
@@ -93,8 +93,8 @@
           <hr />
           <div class="field">
             <div class="clear">
-              <div class="title" v-on:click="deleteRole()">Delete this role</div>
-              <div class="description" v-show="edit.delete.open">Once you delete this role, there is no going back.</div>
+              <div class="title" v-on:click="deleteEmployee()">Delete this employee</div>
+              <div class="description" v-show="edit.delete.open">Once you delete this employee, there is no going back.</div>
               <div class="ui divided items" v-show="edit.delete.open">
                 <div class="item">
                   <button class="ui negative button" v-on:click="handleEditDelete()">Delete</button>
@@ -117,7 +117,7 @@
   import MenuArea from '@/components/MenuArea'
   import Error from '@/components/Error'
   export default {
-    name: "Roles",
+    name: "Cards",
     components: {
       HeaderArea,
       MenuArea,
@@ -126,11 +126,11 @@
     data() {
       return {
         addnew: {
-          title: 'Create New Role',
+          title: 'Create New Employee',
           data: initialAddnew()
         },
         edit: {
-          title: 'Edit Role',
+          title: 'Edit Employee',
           data: {},
           delete: {
             open: false
@@ -146,7 +146,7 @@
       }
     },
     mounted() {
-      this.getRoles();
+      this.getEmployees();
     },
     methods: {
       handleAddnewCancel: function () {
@@ -157,7 +157,7 @@
         // TODO: validation
         axios({
           method: 'post',
-          url: utils.getRestUrl('/roles'),
+          url: utils.getRestUrl('/employees'),
           data: JSON.stringify(this.addnew.data),
           headers: {
             'Content-Type': 'application/json',
@@ -165,7 +165,7 @@
           }
         }).then(response => {
           // console.log(response.data);
-          this.getRoles();
+          this.getEmployees();
           this.handleAddnewCancel();
         }).catch(error => {
           console.log(error);
@@ -175,7 +175,7 @@
         // TODO: validation
         axios({
           method: 'patch',
-          url: utils.getRestUrl('/roles/'.concat(this.edit.data.id)),
+          url: utils.getRestUrl('/employees/'.concat(this.edit.data.id)),
           data: JSON.stringify(this.edit.data),
           headers: {
             'Content-Type': 'application/json',
@@ -183,7 +183,7 @@
           }
         }).then(response => {
           // console.log(response.data);
-          this.getRoles();
+          this.getEmployees();
           this.$refs.edit.hide();
         }).catch(error => {
           console.log(error);
@@ -192,23 +192,23 @@
       handleEditDelete: function () {
         axios({
           method: 'delete',
-          url: utils.getRestUrl('/roles/'.concat(this.edit.data.id)),
+          url: utils.getRestUrl('/employees/'.concat(this.edit.data.id)),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': utils.getAuthorization()
           }
         }).then(response => {
           // console.log(response.data);
-          this.getRoles();
+          this.getEmployees();
           this.$refs.edit.hide();
         }).catch(error => {
           console.log(error);
         });
       },
-      getRoles: function () {
+      getEmployees: function () {
         axios({
           method: 'get',
-          url: utils.getRestUrl('/roles'),
+          url: utils.getRestUrl('/employees'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': utils.getAuthorization()
@@ -232,32 +232,32 @@
           }
         });
       },
-      openAddnewRole: function () {
+      openAddnewEmployee: function () {
         this.$refs.addnew.show();
       },
-      openEditRole: function (id) {
-        var role = {};
+      openEditEmployee: function (id) {
+        var employee = {};
         this.retrieve.items.forEach(function (item) {
           if (item.id == id) {
-            role = item;
+            employee = item;
           }
         });
         this.edit.data = {
-          id: role.id,
-          name: role.name,
-          description: role.description,
-          enabled: role.enabled
+          id: employee.id,
+          name: employee.name,
+          description: employee.description,
+          enabled: employee.enabled
         };
         this.$refs.edit.show();
       },
-      deleteRole: function () {
+      deleteEmployee: function () {
         this.edit.delete.open = !this.edit.delete.open;
       }
     }
   }
   function initialAddnew() {
     return {
-      name: '',
+      name: [],
       description: '',
       enabled: true
     };
