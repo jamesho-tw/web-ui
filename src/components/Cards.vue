@@ -166,15 +166,10 @@
       },
       handleAddnewCreate: function () {
         // TODO: validation
-        var card = {
-          serial_no: this.addnew.data.serial_no,
-          description: this.addnew.data.description,
-          enabled: this.addnew.data.enabled
-        };
         axios({
           method: 'post',
           url: utils.getRestUrl('/cards'),
-          data: card,
+          data: JSON.stringify(this.addnew.data),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': utils.getAuthorization()
@@ -188,16 +183,11 @@
         });
       },
       handleEditSave: function (id) {
-        var card = {
-          id: this.edit.data.id,
-          serial_no: this.edit.data.serial_no,
-          description: this.edit.data.description,
-          enabled: this.edit.data.enabled
-        };
+        // TODO: validation
         axios({
           method: 'patch',
           url: utils.getRestUrl('/cards/'.concat(card.id)),
-          data: card,
+          data: JSON.stringify(this.edit.data),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': utils.getAuthorization()

@@ -33,7 +33,7 @@
               </sui-table-cell>
             </sui-table-row>
           </sui-table-body>
-<!--
+          <!--
               <sui-table-footer>
               <sui-table-row>
                 <sui-table-header-cell colspan="6">
@@ -251,6 +251,7 @@
     },
     mounted() {
       this.getUsers();
+      this.getRoleOptions();
     },
     methods: {
       handleDisplayPasswordAddnew: function () {
@@ -289,6 +290,7 @@
         this.$refs.addnew.hide();
       },
       handleAddnewCreate: function () {
+        // TODO: validation
         // if (!checkUsername(this.addnew.data.username)) {
         //   return false;
         // }
@@ -313,18 +315,11 @@
         this.handleAddnewCancel();
       },
       handleEditSave: function () {
-        var user = {
-          id: this.edit.data.id,
-          username: this.edit.data.name,
-          password: this.edit.data.password,
-          description: this.edit.data.description,
-          force: this.edit.data.force,
-          enabled: this.edit.data.enabled
-        };
+        // TODO: validation
         axios({
           method: 'patch',
-          url: utils.getRestUrl('/users/'.concat(user.id)),
-          data: user,
+          url: utils.getRestUrl('/users/'.concat(this.edit.data.id)),
+          data: JSON.stringify(this.edit.data),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': utils.getAuthorization()
@@ -421,16 +416,20 @@
             user = item;
           }
         });
-        this.edit.data['id'] = user.id;
-        this.edit.data['username'] = user.username;
-        this.edit.data['password'] = user.password;
-        this.edit.data['description'] = user.description;
-        this.edit.data['force'] = user.force;
-        this.edit.data['enabled'] = user.enabled;
-        this.edit.data['roles'] = user.roles;
-        this.edit.password['confirm'] = user.password;
-        this.edit.password['type'] = 'password';
         this.getRoleOptions();
+        this.edit.data = {
+          id: user.id,
+          username: user.username,
+          password: user.password,
+          description: user.description,
+          force: user.force,
+          enabled: user.enabled,
+          roles: user.roles
+        };
+        this.edit.password = {
+          confirm: user.password,
+          type: 'password'
+        };
         this.$refs.edit.show();
       },
       deleteUser: function () {

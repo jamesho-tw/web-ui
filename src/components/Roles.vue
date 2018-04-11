@@ -166,15 +166,10 @@
       },
       handleAddnewCreate: function () {
         // TODO: validation
-        var role = {
-          name: this.addnew.data.name,
-          description: this.addnew.data.description,
-          enabled: this.addnew.data.enabled
-        };
         axios({
           method: 'post',
           url: utils.getRestUrl('/roles'),
-          data: role,
+          data: JSON.stringify(this.addnew.data),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': utils.getAuthorization()
@@ -188,16 +183,11 @@
         });
       },
       handleEditSave: function (id) {
-        var role = {
-          id: this.edit.data.id,
-          name: this.edit.data.name,
-          description: this.edit.data.description,
-          enabled: this.edit.data.enabled
-        };
+        // TODO: validation
         axios({
           method: 'patch',
           url: utils.getRestUrl('/roles/'.concat(role.id)),
-          data: role,
+          data: JSON.stringify(this.edit.data),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': utils.getAuthorization()
