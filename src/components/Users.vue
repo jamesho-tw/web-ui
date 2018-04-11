@@ -6,9 +6,9 @@
     <div class="main">
       <b-card>
         <div id="toolbar">
-          <sui-button basic size="mini" v-b-modal="'addnew.open'">Create</sui-button>
+          <sui-button basic size="mini" v-on:click="openAddnewUser()">Create</sui-button>
         </div>
-        <div id="context" v-show="status">
+        <div id="context">
           <sui-table single-line>
             <sui-table-header>
               <sui-table-row>
@@ -28,7 +28,7 @@
                 <sui-table-cell>{{ item.created }}</sui-table-cell>
                 <sui-table-cell>{{ item.enabled }}</sui-table-cell>
                 <sui-table-cell>
-                  <button class="ui mini editor button" v-on:click="editUser(item.id)">Edit</button>
+                  <button class="ui mini editor button" v-on:click="openEditUser(item.id)">Edit</button>
                 </sui-table-cell>
               </sui-table-row>
             </sui-table-body>
@@ -53,7 +53,7 @@
           </sui-table>
         </div>
         <div id="modal">
-          <b-modal ref="addnew" id="addnew.open" :title="addnew.title" centered size="lg">
+          <b-modal ref="addnew" :title="addnew.title" centered size="lg">
             <div class="field">
               <div class="ui left input">
                 <label>Username:</label>
@@ -78,7 +78,7 @@
             <div class="field">
               <div class="ui left input">
                 <label>Roles:</label>
-                <sui-dropdown fluid multiple selection :options="roles.options" v-model="addnew.data.roles" />
+                <sui-dropdown class="ui tiny" fluid multiple selection :options="roles.options" v-model="addnew.data.roles" />
               </div>
             </div>
             <div class="field">
@@ -111,7 +111,7 @@
               <button class="ui button secondary" v-on:click="handleAddnewCancel()">Cancel</button>
             </div>
           </b-modal>
-          <b-modal ref="edit" id="edit.open" :title="edit.title" centered size="lg">
+          <b-modal ref="edit" :title="edit.title" centered size="lg">
             <div class="field">
               <div class="ui left input">
                 <label>Username:</label>
@@ -201,7 +201,6 @@
     data() {
       return {
         addnew: {
-          open: false,
           title: 'Create New User',
           data: {
             username: '',
@@ -217,7 +216,6 @@
           }
         },
         edit: {
-          open: false,
           title: 'Edit User',
           data: {
             id: null,
@@ -244,12 +242,8 @@
           message: ''
         },
         roles: {
-          options: [
-            { key: 'AL', value: 'AL', text: 'Alabama' }
-          ]
-        },
-
-        status: true
+          options: []
+        }
       };
     },
     mounted() {
@@ -366,7 +360,6 @@
         }).then(response => {
           // console.log(response.data);
           this.retrieve.items = response.data;
-          this.status = true;
         }).catch(error => {
           this.error.open = true;
           this.error.message = 'Connection refuse!';
@@ -383,7 +376,10 @@
           }
         }).then(response => {
           // console.log(response.data);
+
+          // reset
           this.roles.options = [];
+
           var options = [];
           response.data.forEach(function (item) {
             if (item.enabled) {
@@ -411,7 +407,11 @@
           }
         });
       },
-      editUser: function (id) {
+      openAddnewUser: function () {
+        this.getRoleOptions();
+        this.$refs.addnew.show();
+      },
+      openEditUser: function (id) {
         var user = {};
         this.retrieve.items.forEach(function (item) {
           if (item.id == id) {

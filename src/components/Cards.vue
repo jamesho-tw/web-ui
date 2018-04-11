@@ -6,7 +6,7 @@
     <div class="main">
       <b-card>
         <div id="toolbar">
-          <sui-button basic size="mini" v-b-modal="'addnew.open'">Create</sui-button>
+          <sui-button basic size="mini" v-on:click="openAddnewCard()">Create</sui-button>
         </div>
         <div id="context">
           <sui-table single-line>
@@ -28,14 +28,14 @@
                 <sui-table-cell>{{ item.created }}</sui-table-cell>
                 <sui-table-cell>{{ item.enabled }}</sui-table-cell>
                 <sui-table-cell>
-                  <button class="ui mini editor button" v-on:click="editCard(item.id)">Edit</button>
+                  <button class="ui mini editor button" v-on:click="openEditCard(item.id)">Edit</button>
                 </sui-table-cell>
               </sui-table-row>
             </sui-table-body>
           </sui-table>
         </div>
         <div id="modal">
-          <b-modal ref="addnew" id="addnew.open" :title="addnew.title" centered size="lg">
+          <b-modal ref="addnew" :title="addnew.title" centered size="lg">
             <div class="field">
               <div class="ui left input">
                 <label>Serial No:</label>
@@ -64,7 +64,7 @@
               <button class="ui button secondary" v-on:click="handleAddnewCancel()">Cancel</button>
             </div>
           </b-modal>
-          <b-modal ref="edit" id="edit.open" :title="edit.title" centered size="lg">
+          <b-modal ref="edit" :title="edit.title" centered size="lg">
             <div class="field">
               <div class="ui left input">
                 <label>Serial No:</label>
@@ -125,7 +125,6 @@
     data() {
       return {
         addnew: {
-          open: false,
           title: 'Create New Card',
           data: {
             serial_no: '',
@@ -134,7 +133,6 @@
           }
         },
         edit: {
-          open: false,
           title: 'Edit Card',
           data: {
             id: null,
@@ -254,7 +252,10 @@
           }
         });
       },
-      editCard: function (id) {
+      openAddnewCard: function () {
+        this.$refs.addnew.show();
+      },
+      openEditCard: function (id) {
         var card = {};
         this.retrieve.items.forEach(function (item) {
           if (item.id == id) {

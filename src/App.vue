@@ -85,17 +85,22 @@
     width: 50px;
   }
 
-  .main #modal .field .input label {
+  .main #modal .field {
+    padding: 0.25em 0;
+  }
+
+  .main #modal .field label {
     padding: 0 1em;
     text-align: right;
     line-height: 36px;
     width: 160px;
   }
 
-  .main #modal .field .input input[type="text"],
-  .main #modal .field .input input[type="password"] {
+  .main #modal .field input[type="text"],
+  .main #modal .field input[type="password"],
+  .main #modal .field textarea,
+  .main #modal .field .selection {
     width: 240px;
-    height: 2.5em;
   }
 
   .main #modal .field input[type="checkbox"] {
@@ -103,18 +108,8 @@
     height: 2em;
   }
 
-  .main #modal .field textarea {
-    width: 240px;
-  }
-
-  .main #modal .field .selection {
-    width: 240px;
-    height: 2em;
-  }
-
   .main #modal .field button.function {
     margin-left: 1em;
-    height: 2.5em;
   }
 
   .main #modal .field .clear {
