@@ -94,9 +94,27 @@
 
   .main .modal .field input[type="text"],
   .main .modal .field input[type="password"],
+  .main .modal .field input[type="date"],
   .main .modal .field textarea,
   .main .modal .field .selection {
     width: 240px;
+  }
+
+  .main .modal .field .datepicker {
+    padding: .725em 1em;
+    border: 1px solid rgba(34, 36, 38, .15);
+    border-radius: 4px;
+    height: 3em;
+  }
+
+  .main .modal .field .calendar {
+    border-radius: 4px;
+    width: 240px;
+  }
+
+  .main .modal .field .calendar .cell {
+    height: 24px;
+    line-height: 24px;
   }
 
   .main .modal .field input[type="checkbox"] {

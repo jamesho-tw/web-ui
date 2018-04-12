@@ -36,29 +36,106 @@
         </sui-table>
         <!-- Addnew -->
         <b-modal ref="addnew" :title="addnew.title" centered size="lg">
-          <div class="field">
-            <div class="ui left input">
-              <label>Name:</label>
-              <input type="text" v-model="addnew.data.name" autocomplete="off" />
-            </div>
-          </div>
-          <div class="field">
-            <div class="ui left input">
-              <label>Description:</label>
-              <div class="ui reply form">
-                <textarea v-model="addnew.data.description"></textarea>
+          <b-tabs card>
+            <b-tab title="Employee" active>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Employee ID:</label>
+                  <input type="text" v-model="addnew.data.employee.id" autocomplete="off" />
+                </div>
               </div>
-            </div>
-          </div>
-          <hr />
-          <div class="field">
-            <div class="clear">
-              <div class="checkbox">
-                <input type="checkbox" v-model="addnew.data.enabled" />
+              <div class="field">
+                <div class="ui left input">
+                  <label>Date of Joined:</label>
+                  <datepicker :value="addnew.data.employee.hire_date" language="en" format="yyyy/MM/dd" input-class="datepicker" calendar-class="calendar"
+                    autocomplete="off"></datepicker>
+                </div>
               </div>
-              <div class="message">Enabled</div>
-            </div>
-          </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Business Email:</label>
+                  <input type="text" v-model="addnew.data.personal.email" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Business Phone:</label>
+                  <input type="text" v-model="addnew.data.personal.phone" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Description:</label>
+                  <div class="ui reply form">
+                    <textarea v-model="addnew.data.description"></textarea>
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div class="field">
+                <div class="clear">
+                  <div class="checkbox">
+                    <input type="checkbox" v-model="addnew.data.enabled" />
+                  </div>
+                  <div class="message">Enabled</div>
+                </div>
+              </div>
+            </b-tab>
+            <b-tab title="Personal Details">
+              <div class="field">
+                <div class="ui left input">
+                  <label>Name:</label>
+                  <input type="text" v-model="addnew.data.personal.name" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Gender:</label>
+                  <sui-dropdown class="ui tiny" fluid multiple selection v-model="addnew.data.personal.gender" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Email:</label>
+                  <input type="text" v-model="addnew.data.personal.email" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Phone:</label>
+                  <input type="text" v-model="addnew.data.personal.phone" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Date of Birth:</label>
+                  <datepicker :value="addnew.data.personal.birth_date" language="en" format="yyyy/MM/dd" input-class="datepicker" calendar-class="calendar"
+                    autocomplete="off"></datepicker>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Marital Status:</label>
+                  <sui-dropdown class="ui tiny" fluid multiple selection v-model="addnew.data.personal.marital" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>Nationality:</label>
+                  <input type="text" v-model="addnew.data.personal.nationality" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left input">
+                  <label>National ID:</label>
+                  <input type="text" v-model="addnew.data.personal.national_no" autocomplete="off" />
+                </div>
+              </div>
+            </b-tab>
+            <b-tab title="Emergency Contacts">
+
+            </b-tab>
+          </b-tabs>
           <div class="field" slot="modal-footer">
             <button class="ui button primary" v-on:click="handleAddnewCreate()">Create</button>
             <button class="ui button secondary" v-on:click="handleAddnewCancel()">Cancel</button>
@@ -113,12 +190,15 @@
 
 <script>
   import utils from '../scripts/utils.js'
+  import moment from 'moment'
+  import Datepicker from 'vuejs-datepicker'
   import HeaderArea from '@/components/HeaderArea'
   import MenuArea from '@/components/MenuArea'
   import Error from '@/components/Error'
   export default {
     name: "Cards",
     components: {
+      Datepicker,
       HeaderArea,
       MenuArea,
       Error
@@ -257,6 +337,18 @@
   }
   function initialAddnew() {
     return {
+      employee: {
+        id: null,
+        hire_date: moment().toDate()
+      },
+      personal: {
+        name: '',
+        gender: '',
+        birth_date: null,
+        marital: '',
+        nationality: '',
+        national_no: ''
+      },
       name: [],
       description: '',
       enabled: true
